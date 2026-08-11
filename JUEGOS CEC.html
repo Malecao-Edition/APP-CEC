@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inducción Crédito Móvil - Código de Ética</title>
+    <!-- Tipografía -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Librería para generar el Reporte Final como Imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --cm-blue: #001a70;
+            --cm-blue-light: #0033a0;
+            --cm-green: #009639;
+            --cm-green-light: #28a745;
+            --cm-gray: #f4f7f6;
+            --cm-text: #333333;
+            --cm-danger: #dc3545;
+            --cm-card: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--cm-gray); color: var(--cm-text); overflow-x: hidden; }
+
+        /* HEADER */
+        header { background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-svg { width: 35px; height: 35px; }
+        .logo-text { color: var(--cm-blue); font-weight: 800; font-size: 1.1rem; line-height: 1; }
+        .logo-text span { display: block; font-size: 0.65rem; font-weight: 400; }
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+        .score-board { background: var(--cm-blue); color: white; padding: 6px 15px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .music-btn { background: var(--cm-gray); border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; color: var(--cm-blue); font-size: 1rem; display: flex; justify-content: center; align-items: center; }
+
+        /* APP CONTAINER */
+        #app { max-width: 800px; margin: 20px auto; padding: 20px; min-height: 75vh; background: var(--cm-card); border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+        .screen { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2 { color: var(--cm-blue); text-align: center; margin-bottom: 10px; }
+        p { text-align: center; margin-bottom: 20px; font-size: 1rem; color: #555; }
+
+        .btn { background: var(--cm-green); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border-radius: 12px; cursor: pointer; transition: 0.3s; display: block; margin: 0 auto; text-transform: uppercase; width: 100%; max-width: 300px; }
+        .btn:hover { background: var(--cm-blue); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(0); }
+
+        /* REGISTRO */
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; color: var(--cm-blue); margin-bottom: 5px; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--cm-green); outline: none; }
+
+        /* HUB MENU */
+        .modules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .module-card { background: var(--cm-gray); border: 2px solid #e0e0e0; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .module-card:hover { border-color: var(--cm-blue); background: #f0f4fc; transform: translateY(-5px); }
+        .module-card i { font-size: 2.5rem; color: var(--cm-blue); margin-bottom: 10px; }
+        .module-card h3 { font-size: 1.1rem; color: var(--cm-text); margin-bottom: 5px; }
+        .module-card .status { font-size: 0.85rem; font-weight: 600; color: #888; }
+        .module-card.completed { border-color: var(--cm-green); background: rgba(0,150,57,0.05); pointer-events: none; }
+        .module-card.completed .status { color: var(--cm-green); }
+
+        /* ESTILOS JUEGOS */
+        .question-box { background: var(--cm-blue); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; font-size: 1.1rem; text-align: center; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { background: white; border: 2px solid #ccc; padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: 0.2s; text-align: left; font-weight: 500; }
+        .option-btn:hover { border-color: var(--cm-blue); background: #f0f4fc; }
+        .option-btn.correct { background: var(--cm-green); border-color: var(--cm-green); color: white; }
+        .option-btn.wrong { background: var(--cm-danger); border-color: var(--cm-danger); color: white; }
+
+        /* CLASIFICADOR */
+        .item-to-classify { background: white; border: 3px dashed var(--cm-blue); padding: 20px; border-radius: 15px; text-align: center; font-size: 1.2rem; font-weight: 700; color: var(--cm-blue); margin-bottom: 10px; }
+        .drop-zones { display: flex; gap: 15px; }
+        .drop-zone { flex: 1; padding: 20px 10px; border-radius: 12px; text-align: center; border: 2px solid transparent; cursor: pointer; color: white; font-weight: 600; }
+        .drop-zone.si { background: var(--cm-green); box-shadow: 0 5px 0 #00702a; }
+        .drop-zone.no { background: var(--cm-danger); box-shadow: 0 5px 0 #a71d2a; }
+        .drop-zone:active { transform: translateY(5px); box-shadow: none; }
+
+        /* SECUENCIA */
+        .seq-container { display: flex; flex-direction: column; gap: 20px; }
+        .sequence-options { display: flex; flex-direction: column; gap: 10px; }
+        .seq-item { background: var(--cm-gray); border: 2px solid var(--cm-blue-light); padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; font-weight: 600; }
+        .seq-item:hover { background: var(--cm-blue-light); color: white; }
+        .seq-item.used { display: none; }
+        .sequence-result { display: flex; flex-direction: column; gap: 8px; background: #fafafa; padding: 15px; border-radius: 12px; border: 2px dashed #ccc; min-height: 200px; }
+        .seq-result-item { background: var(--cm-green); color: white; padding: 12px; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+        /* SEMÁFORO */
+        .timer-bar { width: 100%; height: 12px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .timer-fill { height: 100%; background: var(--cm-danger); width: 100%; transition: width 0.1s linear; }
+        .tf-container { display: flex; gap: 15px; margin-top: 20px; }
+        .btn-tf { flex: 1; padding: 25px 10px; font-size: 1.2rem; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+        .btn-true { background: var(--cm-green); }
+        .btn-false { background: var(--cm-danger); }
+        .btn-tf:active { transform: translateY(4px); box-shadow: none; }
+
+        /* FEEDBACK MODAL */
+        .feedback-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .feedback-box { background: white; padding: 30px 20px; border-radius: 20px; text-align: center; max-width: 400px; width: 100%; }
+        .feedback-box i { font-size: 3.5rem; margin-bottom: 10px; }
+        .feedback-correct { color: var(--cm-green); }
+        .feedback-wrong { color: var(--cm-danger); }
+
+        /* CONTENEDOR OCULTO PARA EL REPORTE FINAL (No visible para el usuario interactuando) */
+        #report-template { position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 40px; border: 10px solid var(--cm-blue); border-radius: 0; color: var(--cm-text); font-family: 'Poppins', sans-serif; }
+        .rt-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--cm-green); padding-bottom: 20px; margin-bottom: 20px; }
+        .rt-title { font-size: 24px; font-weight: 800; color: var(--cm-blue); }
+        .rt-data { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; font-size: 16px; }
+        .rt-data div { background: var(--cm-gray); padding: 10px; border-radius: 8px; border-left: 5px solid var(--cm-blue); }
+        .rt-scores { margin-bottom: 30px; }
+        .rt-score-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #ddd; font-size: 18px; }
+        .rt-total { font-size: 32px; font-weight: bold; text-align: center; padding: 20px; background: var(--cm-blue); color: white; border-radius: 10px; margin-bottom: 10px; }
+        .rt-status { text-align: center; font-size: 24px; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .modules-grid { grid-template-columns: 1fr; }
+            #app { margin: 10px; min-height: 85vh; border-radius: 15px; }
+            .btn { width: 100%; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Libre de Regalías -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <div class="logo-container">
+            <svg class="logo-svg" viewBox="0 0 100 100"><path d="M20,50 L40,50 L40,20 L60,20 L60,50 L80,50 L80,70 L60,70 L60,100 L40,100 L40,70 L20,70 Z" fill="var(--cm-blue)"/><path d="M20,20 L40,20 L40,40 L20,40 Z" fill="var(--cm-green)"/></svg>
+            <div class="logo-text">CRÉDITO MÓVIL<span>Siempre Confiable</span></div>
+        </div>
+        <div class="header-controls">
+            <button class="music-btn" onclick="toggleMusic()" id="btn-music"><i class="fas fa-volume-mute"></i></button>
+            <div class="score-board"><i class="fas fa-star" style="color:#ffd700;"></i> <span id="global-score">0</span> pts</div>
+        </div>
+    </header>
+
+    <div id="app">
+        
+        <!-- BIENVENIDA -->
+        <div id="screen-welcome" class="screen active">
+            <div style="font-size: 4rem; color: var(--cm-green); text-align: center; margin-bottom: 10px;"><i class="fas fa-rocket"></i></div>
+            <h1 style="font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-top: 20px; color: var(--cm-blue);">¡ES HORA DE APRENDER JUGANDO!</h1>
+            <p style="font-size: 1rem; color: #666; margin-bottom: 30px;">Demuestra todo lo aprendido sobre nuestro Código de Ética. Juega los 4 módulos y obtén tu reporte final.</p>
+            <button class="btn" onclick="showScreen('screen-register')"><i class="fas fa-user-plus"></i> Ingresar</button>
+        </div>
+
+        <!-- REGISTRO -->
+        <div id="screen-register" class="screen">
+            <h2>Registro de Colaborador</h2>
+            <p>Ingresa tus datos para generar tu certificado al finalizar.</p>
+            
+            <form id="regForm" onsubmit="registerUser(event)">
+                <div class="form-group">
+                    <label>Nombres</label>
+                    <input type="text" id="reg-nom" required placeholder="Ej. Juan Carlos">
+                </div>
+                <div class="form-group">
+                    <label>Apellidos</label>
+                    <input type="text" id="reg-ape" required placeholder="Ej. Pérez Silva">
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Inducción</label>
+                    <input type="date" id="reg-fecha" required>
+                </div>
+                <div class="form-group">
+                    <label>Sede / Agencia</label>
+                    <input type="text" id="reg-sede" required placeholder="Ej. Agencia Principal Lima">
+                </div>
+                <div class="form-group">
+                    <label>Puesto</label>
+                    <input type="text" id="reg-puesto" required placeholder="Ej. Asesor de Crédito">
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-check"></i> Registrar y Continuar</button>
+            </form>
+        </div>
+
+        <!-- HUB / MENÚ -->
+        <div id="screen-menu" class="screen">
+            <h2>Módulos de Entrenamiento</h2>
+            <p>Selecciona un módulo. Complétalos todos para descargar tu reporte.</p>
+            
+            <div class="modules-grid">
+                <div class="module-card" id="card-m1" onclick="launchGame(1)">
+                    <i class="fas fa-balance-scale"></i>
+                    <h3>1. Decisiones</h3>
+                    <div class="status" id="status-m1"><i class="far fa-circle"></i> Pendiente (10 Preguntas)</div>
+                </div>
+                <div class="module-card" id="card-m2" onclick="launchGame(2)">
+                    <i class="fas fa-hand-pointer"></i>
+                    <h3>2. El Clasificador</h3>
+                    <div class="status" id="status-m2"><i class="far fa-circle"></i> Pendiente (10 Acciones)</div>
+                </div>
+                <div class="module-card" id="card-m3" onclick="launchGame(3)">
+                    <i class="fas fa-route"></i>
+                    <h3>3. Ruta Denuncia</h3>
+                    <div class="status" id="status-m3"><i class="far fa-circle"></i> Pendiente (1 Secuencia)</div>
+                </div>
+                <div class="module-card" id="card-m4" onclick="launchGame(4)">
+                    <i class="fas fa-traffic-light"></i>
+                    <h3>4. Semáforo</h3>
+                    <div class="status" id="status-m4"><i class="far fa-circle"></i> Pendiente (10 Casos)</div>
+                </div>
+            </div>
+            
+            <button class="btn" id="btn-finish" style="display: none; background:var(--cm-blue);" onclick="showFinal()"><i class="fas fa-file-contract"></i> Ver Resultados</button>
+        </div>
+
+        <!-- G1: DECISIONES -->
+        <div id="screen-game1" class="screen">
+            <h2><i class="fas fa-balance-scale"></i> Decisiones Móviles</h2>
+            <div class="question-box" id="g1-question"></div>
+            <div class="options-grid" id="g1-options"></div>
+            <p id="g1-counter" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <!-- G2: CLASIFICADOR -->
+        <div id="screen-game2" class="screen">
+            <h2><i class="fas fa-hand-pointer"></i> Clasificador Ético</h2>
+            <div class="item-to-classify" id="g2-item"></div>
+            <div class="drop-zones">
+                <div class="drop-zone si" onclick="handleG2(true)"><i class="fas fa-check-circle"></i> SÍ HACEMOS</div>
+                <div class="drop-zone no" onclick="handleG2(false)"><i class="fas fa-times-circle"></i> NO HACEMOS</div>
+            </div>
+            <p id="g2-counter" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <!-- G3: SECUENCIA -->
+        <div id="screen-game3" class="screen">
+            <h2><i class="fas fa-route"></i> Ruta de la Denuncia</h2>
+            <p style="font-size: 0.9rem;">Ordena los 5 pasos según el Comité de Ética (Pág. 24).</p>
+            <div class="seq-container">
+                <div>
+                    <h3 style="font-size: 0.9rem; margin-bottom: 5px;">Tu Secuencia:</h3>
+                    <div class="sequence-result" id="g3-result"></div>
+                </div>
+                <div>
+                    <h3 style="font-size: 0.9rem; margin-bottom: 5px;">Opciones disponibles:</h3>
+                    <div class="sequence-options" id="g3-options"></div>
+                </div>
+                <button class="btn" style="background:var(--cm-danger); padding: 10px;" onclick="resetSequence()"><i class="fas fa-undo"></i> Borrar Todo</button>
+            </div>
+        </div>
+
+        <!-- G4: SEMÁFORO -->
+        <div id="screen-game4" class="screen">
+            <h2><i class="fas fa-traffic-light"></i> El Semáforo</h2>
+            <div class="timer-bar"><div class="timer-fill" id="g4-timer"></div></div>
+            <div class="question-box" id="g4-question" style="font-size: 1.3rem;"></div>
+            <div class="tf-container">
+                <button class="btn-tf btn-true" onclick="answerG4(true)"><i class="fas fa-check"></i> Verdadero</button>
+                <button class="btn-tf btn-false" onclick="answerG4(false)"><i class="fas fa-times"></i> Falso</button>
+            </div>
+            <p id="g4-counter" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <!-- RESULTADO FINAL -->
+        <div id="screen-final" class="screen">
+            <i class="fas fa-certificate" style="color: #ffd700; font-size: 5rem; display: block; text-align: center; margin-top:20px;"></i>
+            <h2 style="font-size: 2rem; margin-top:10px;">¡Inducción Completada!</h2>
+            <div style="font-size: 4rem; color: var(--cm-blue); font-weight: 800; text-align: center; margin: 10px 0;" id="final-score-text">0</div>
+            <p style="font-weight: bold;">Puntos Totales de 1000</p>
+            
+            <button class="btn" onclick="generateReport()" style="margin-bottom: 15px;"><i class="fas fa-download"></i> Descargar Reporte (PDF/Img)</button>
+            <button class="btn" onclick="location.reload()" style="background: #888;"><i class="fas fa-sign-out-alt"></i> Salir / Nuevo Usuario</button>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE FEEDBACK -->
+    <div class="feedback-overlay" id="feedback-modal">
+        <div class="feedback-box">
+            <i id="fb-icon" class="fas"></i>
+            <h2 id="fb-title"></h2>
+            <p id="fb-text"></p>
+            <button class="btn" id="fb-btn" onclick="closeFeedback()">Siguiente <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- REPORTE A EXPORTAR (Oculto) -->
+    <div id="report-template">
+        <div class="rt-header">
+            <div class="logo-container">
+                <svg class="logo-svg" viewBox="0 0 100 100"><path d="M20,50 L40,50 L40,20 L60,20 L60,50 L80,50 L80,70 L60,70 L60,100 L40,100 L40,70 L20,70 Z" fill="#001a70"/><path d="M20,20 L40,20 L40,40 L20,40 Z" fill="#009639"/></svg>
+                <div class="logo-text" style="color:#001a70; font-size:24px;">CRÉDITO MÓVIL<span style="font-size:12px;">Siempre Confiable</span></div>
+            </div>
+            <div class="rt-title">REPORTE DE INDUCCIÓN ÉTICA</div>
+        </div>
+        
+        <div class="rt-data">
+            <div><b>Colaborador:</b> <span id="rep-name"></span></div>
+            <div><b>Fecha:</b> <span id="rep-date"></span></div>
+            <div><b>Sede/Agencia:</b> <span id="rep-sede"></span></div>
+            <div><b>Puesto:</b> <span id="rep-puesto"></span></div>
+        </div>
+
+        <div class="rt-scores">
+            <h3 style="margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Desglose por Módulo</h3>
+            <div class="rt-score-row"><span>Módulo 1: Decisiones Móviles (10 Casos)</span> <b id="rep-s1">0 / 250 pts</b></div>
+            <div class="rt-score-row"><span>Módulo 2: Clasificador Ético (10 Acciones)</span> <b id="rep-s2">0 / 250 pts</b></div>
+            <div class="rt-score-row"><span>Módulo 3: Ruta de Denuncia (Secuencia)</span> <b id="rep-s3">0 / 250 pts</b></div>
+            <div class="rt-score-row"><span>Módulo 4: El Semáforo (10 Casos)</span> <b id="rep-s4">0 / 250 pts</b></div>
+        </div>
+
+        <div class="rt-total">PUNTAJE FINAL: <span id="rep-total">0</span> / 1000</div>
+        <div class="rt-status" id="rep-status"></div>
+        <p style="text-align: center; margin-top: 30px; font-size: 12px; color: gray;">*Documento generado por la Plataforma de Inducción de Crédito Móvil.</p>
+    </div>
+
+    <script>
+        // --- DATOS DEL USUARIO Y PUNTAJES ---
+        const user = { nom: "", ape: "", fecha: "", sede: "", puesto: "" };
+        const scores = { m1: 0, m2: 0, m3: 0, m4: 0 };
+        let modulesCompleted = { m1: false, m2: false, m3: false, m4: false };
+
+        // --- AUDIO Y EFECTOS ---
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.2;
+        let isMusicPlaying = false;
+        
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function toggleMusic() {
+            initAudio();
+            if (isMusicPlaying) { bgMusic.pause(); document.getElementById('btn-music').innerHTML = '<i class="fas fa-volume-mute"></i>'; } 
+            else { bgMusic.play().catch(e=>console.log("Audio block:", e)); document.getElementById('btn-music').innerHTML = '<i class="fas fa-volume-up"></i>'; }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function playSound(type) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            if (type === 'success') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'click') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }
+        }
+
+        // --- NAVEGACIÓN ---
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // --- REGISTRO ---
+        function registerUser(e) {
+            e.preventDefault();
+            initAudio(); // Activa audio context seguro
+            if(!isMusicPlaying) toggleMusic();
+
+            user.nom = document.getElementById('reg-nom').value;
+            user.ape = document.getElementById('reg-ape').value;
+            user.fecha = document.getElementById('reg-fecha').value;
+            user.sede = document.getElementById('reg-sede').value;
+            user.puesto = document.getElementById('reg-puesto').value;
+            
+            showScreen('screen-menu');
+        }
+
+        function updateGlobalScore() {
+            const total = scores.m1 + scores.m2 + scores.m3 + scores.m4;
+            document.getElementById('global-score').innerText = total;
+        }
+
+        function showFeedback(isCorrect, message, pointsAdded, callback) {
+            playSound(isCorrect ? 'success' : 'wrong');
+            const modal = document.getElementById('feedback-modal');
+            
+            document.getElementById('fb-icon').className = isCorrect ? 'fas fa-check-circle feedback-correct' : 'fas fa-times-circle feedback-wrong';
+            
+            let t = isCorrect ? '¡Correcto!' : 'Incorrecto';
+            if(pointsAdded > 0) t += ` (+${pointsAdded} pts)`;
+            document.getElementById('fb-title').innerText = t;
+            document.getElementById('fb-title').className = isCorrect ? 'feedback-correct' : 'feedback-wrong';
+            
+            document.getElementById('fb-text').innerText = message;
+            modal.style.display = 'flex';
+            modal.callback = callback;
+        }
+
+        function closeFeedback() {
+            playSound('click');
+            document.getElementById('feedback-modal').style.display = 'none';
+            if(document.getElementById('feedback-modal').callback) document.getElementById('feedback-modal').callback();
+        }
+
+        function returnToMenu(modNum) {
+            modulesCompleted['m' + modNum] = true;
+            const card = document.getElementById('card-m' + modNum);
+            card.classList.add('completed');
+            document.getElementById('status-m' + modNum).innerHTML = '<i class="fas fa-check-circle"></i> Completado';
+            showScreen('screen-menu');
+            
+            if (Object.values(modulesCompleted).every(val => val === true)) {
+                document.getElementById('btn-finish').style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        }
+
+        function launchGame(modNum) { playSound('click'); if(modNum===1) initG1(); if(modNum===2) initG2(); if(modNum===3) initG3(); if(modNum===4) initG4(); }
+        function shuffleArray(array) { for (let i=array.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+
+        // ==========================================
+        // BANCOS DE PREGUNTAS COMPLETOS (10 C/U)
+        // ==========================================
+        const bankG1 = [
+            { q: "Un proveedor te ofrece un celular si apruebas su contrato más rápido. ¿Qué haces?", opts: ["Aceptar el regalo en silencio.", "Rechazarlo, va contra la política de Corrupción.", "Pedir dinero en lugar del celular."], ans: 1, fb: "No solicitar ni aceptar beneficios indebidos (Pág. 18)." },
+            { q: "Escuchas a un compañero hacer comentarios racistas a un nuevo empleado.", opts: ["Lo reportas, promovemos el respeto.", "Te ríes para no crear tensión.", "No es tu problema, lo ignoras."], ans: 0, fb: "Rechazamos la discriminación y valoramos la diversidad (Pág. 7)." },
+            { q: "Tienes prisa y un cliente tiene dudas sobre un crédito.", opts: ["Atiendes con paciencia y transparencia.", "Le dices que lea el contrato rápido.", "Le ofreces algo que no necesita para acabar."], ans: 0, fb: "Nuestro compromiso es brindar información clara y empatía (Pág. 13)." },
+            { q: "Inicias una relación sentimental con tu jefe directo.", opts: ["Lo mantienes en secreto.", "Se abstienen por generar conflicto de interés.", "Aprovechas para pedirle ascensos."], ans: 1, fb: "No establecer relaciones que afecten la transparencia (Pág. 15)." },
+            { q: "Te enteras de un rumor falso sobre la vida de una compañera.", opts: ["Se lo cuentas a tu equipo en el almuerzo.", "No difudes rumores o chismes.", "Lo publicas en redes sin su nombre."], ans: 1, fb: "Prohibido difundir chismes que afecten el ambiente (Pág. 8)." },
+            { q: "Un cliente te pide que modifiques sus ingresos en el sistema para calificar.", opts: ["Lo haces solo esta vez por ayudar.", "Te niegas, eso es Fraude.", "Le cobras una comisión por hacerlo."], ans: 1, fb: "No falsear ni alterar información (Pág. 19)." },
+            { q: "Descubres un documento con la estrategia confidencial de la competencia.", opts: ["No lo usas, competimos con integridad.", "Lo copias rápido para sacar ventaja.", "Se lo vendes a otro competidor."], ans: 0, fb: "No obtenemos ni usamos información confidencial de terceros (Pág. 21)." },
+            { q: "Necesitas mudarte un sábado. ¿Usas el vehículo de la empresa?", opts: ["Sí, nadie se dará cuenta.", "No, los activos no son para uso personal.", "Sí, pero le pones gasolina propia."], ans: 1, fb: "No emplear vehículos utilitarios fuera de horario (Pág. 16)." },
+            { q: "Para acelerar un trámite, el funcionario pide una 'colaboración'.", opts: ["Se la das, es práctica común.", "Te niegas, están prohibidas las coimas.", "Pides reembolso a la empresa luego."], ans: 1, fb: "No realizar pagos de facilitación (Pág. 18)." },
+            { q: "Ves a un compañero robando material de oficina.", opts: ["Finges no ver, no es tu área.", "Denuncias la irregularidad de buena fe.", "Le pides que te comparta algo."], ans: 1, fb: "No encubrir actos de fraude (Pág. 19)." }
+        ];
+
+        const bankG2 = [
+            { text: "Tratar a todas las personas con respeto y dignidad", isSi: true, fb: "Conducta esperada en CM (Pág. 7)." },
+            { text: "Acuerdos indebidos de precios con la competencia", isSi: false, fb: "Competimos lealmente, sin pactos (Pág. 21)." },
+            { text: "Brindar educación financiera al cliente", isSi: true, fb: "Es nuestro compromiso (Pág. 13)." },
+            { text: "Condicionar beneficios a favores sexuales", isSi: false, fb: "Cero tolerancia al acoso (Pág. 10)." },
+            { text: "Realizar cobros fuera de los procedimientos", isSi: false, fb: "Es considerado fraude (Pág. 19)." },
+            { text: "Obtener información de fuentes públicas legales", isSi: true, fb: "Así competimos éticamente (Pág. 21)." },
+            { text: "Enviar imágenes sexuales por canales internos", isSi: false, fb: "Conducta totalmente prohibida (Pág. 10)." },
+            { text: "Denunciar irregularidades al Comité de Ética", isSi: true, fb: "Fortalece nuestra cultura (Pág. 24)." },
+            { text: "Gritar o amedrentar a un compañero", isSi: false, fb: "Violencia laboral no permitida (Pág. 9)." },
+            { text: "Proteger la información financiera del cliente", isSi: true, fb: "Confidencialidad y seguridad (Pág. 12)." }
+        ];
+
+        const bankG4 = [
+            { q: "Una falta leve (ej. descuido) se sanciona con despido automático.", ans: false, fb: "Falso. Recibe amonestación verbal/escrita (Pág. 27)." },
+            { q: "Las denuncias pueden provocar represalias hacia quien reporta.", ans: false, fb: "Falso. Se protege a quien actúa de buena fe (Pág. 24)." },
+            { q: "El Gerente General es el Presidente del Comité de Ética.", ans: true, fb: "Verdadero. (Pág. 23)." },
+            { q: "Se puede usar la laptop de la empresa para descargar juegos.", ans: false, fb: "Falso. Mal uso de recursos (Pág. 16)." },
+            { q: "El acoso psicológico es considerado violencia laboral.", ans: true, fb: "Verdadero. Cero tolerancia (Pág. 9)." },
+            { q: "Dar préstamos a familiares directos sin aviso está permitido.", ans: false, fb: "Falso. Es conflicto de intereses (Pág. 17)." },
+            { q: "Puedes denunciar al correo: etica@creditomovil.com", ans: true, fb: "Verdadero. Es un canal oficial (Pág. 25)." },
+            { q: "Está permitido suplantar identidad si el cliente lo autoriza.", ans: false, fb: "Falso. Es un fraude y está prohibido (Pág. 19)." },
+            { q: "Difundir rumores o chismes es una conducta prohibida.", ans: true, fb: "Verdadero. Afecta el ambiente (Pág. 8)." },
+            { q: "Nuestra visión es ser líderes en el sector microfinanciero.", ans: true, fb: "Verdadero. Con servicio de calidad e innovación (Pág. 5)." }
+        ];
+
+        // --- G1 (10 Preguntas x 25 pts) ---
+        let g1CurrentList = []; let g1Idx = 0;
+        function initG1() { showScreen('screen-game1'); g1CurrentList = shuffleArray([...bankG1]); g1Idx = 0; scores.m1 = 0; renderG1(); }
+        function renderG1() {
+            document.getElementById('g1-counter').innerText = `Caso ${g1Idx + 1} de 10`;
+            const current = g1CurrentList[g1Idx];
+            document.getElementById('g1-question').innerText = current.q;
+            const optsContainer = document.getElementById('g1-options'); optsContainer.innerHTML = '';
+            current.opts.forEach((opt, index) => {
+                const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = opt;
+                btn.onclick = () => {
+                    const isCorrect = index === current.ans;
+                    let pts = 0;
+                    if(isCorrect) { btn.classList.add('correct'); pts = 25; scores.m1 += pts; updateGlobalScore(); } 
+                    else { btn.classList.add('wrong'); optsContainer.children[current.ans].classList.add('correct'); }
+                    setTimeout(() => showFeedback(isCorrect, current.fb, pts, () => { g1Idx++; if(g1Idx < 10) renderG1(); else returnToMenu(1); }), 400);
+                };
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // --- G2 (10 Acciones x 25 pts) ---
+        let g2CurrentList = []; let g2Idx = 0;
+        function initG2() { showScreen('screen-game2'); g2CurrentList = shuffleArray([...bankG2]); g2Idx = 0; scores.m2 = 0; renderG2(); }
+        function renderG2() { document.getElementById('g2-counter').innerText = `Acción ${g2Idx + 1} de 10`; document.getElementById('g2-item').innerText = g2CurrentList[g2Idx].text; }
+        function handleG2(isSiZone) {
+            const current = g2CurrentList[g2Idx]; const isCorrect = current.isSi === isSiZone;
+            let pts = 0; if(isCorrect) { pts = 25; scores.m2 += pts; updateGlobalScore(); }
+            showFeedback(isCorrect, current.fb, pts, () => { g2Idx++; if(g2Idx < 10) renderG2(); else returnToMenu(2); });
+        }
+
+        // --- G3 (1 Secuencia = 250 pts) ---
+        const g3CorrectOrder = ["Irregularidad", "Denuncia", "Investigación", "Evaluación", "Decisión"];
+        let g3Shuffled = []; let g3UserOrder = [];
+        function initG3() { showScreen('screen-game3'); g3Shuffled = shuffleArray([...g3CorrectOrder]); g3UserOrder = []; scores.m3 = 0; renderG3(); }
+        function renderG3() {
+            const opts = document.getElementById('g3-options'); const res = document.getElementById('g3-result');
+            opts.innerHTML = ''; res.innerHTML = '';
+            g3Shuffled.forEach(text => {
+                const btn = document.createElement('div'); btn.className = 'seq-item'; btn.innerText = text;
+                if(g3UserOrder.includes(text)) btn.classList.add('used');
+                else btn.onclick = () => { playSound('click'); g3UserOrder.push(text); renderG3(); };
+                opts.appendChild(btn);
+            });
+            g3UserOrder.forEach((text, i) => {
+                const div = document.createElement('div'); div.className = 'seq-result-item';
+                div.innerHTML = `<span style="background:white; color:var(--cm-green); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">${i+1}</span> ${text}`;
+                res.appendChild(div);
+            });
+            if (g3UserOrder.length === 5) checkG3();
+        }
+        function resetSequence() { playSound('click'); g3UserOrder = []; renderG3(); }
+        function checkG3() {
+            let isCorrect = g3UserOrder.every((val, i) => val === g3CorrectOrder[i]);
+            if(isCorrect) {
+                scores.m3 = 250; updateGlobalScore();
+                setTimeout(() => showFeedback(true, "¡Proceso perfecto! Así funciona el Comité de Ética.", 250, () => returnToMenu(3)), 300);
+            } else {
+                setTimeout(() => showFeedback(false, "El orden no es correcto. (Primero ocurre la Irregularidad y termina con una Decisión).", 0, () => resetSequence()), 300);
+            }
+        }
+
+        // --- G4 (10 Preguntas x 25 pts con Tiempo) ---
+        let g4CurrentList = []; let g4Idx = 0; let g4Timer; let timeLeft;
+        function initG4() { showScreen('screen-game4'); g4CurrentList = shuffleArray([...bankG4]); g4Idx = 0; scores.m4 = 0; renderG4(); }
+        function renderG4() {
+            document.getElementById('g4-counter').innerText = `Pregunta ${g4Idx + 1} de 10`;
+            document.getElementById('g4-question').innerText = g4CurrentList[g4Idx].q;
+            clearInterval(g4Timer); timeLeft = 100;
+            const fill = document.getElementById('g4-timer'); fill.style.width = '100%';
+            g4Timer = setInterval(() => {
+                timeLeft -= 1; // 10 segundos aprox.
+                fill.style.width = timeLeft + '%';
+                if(timeLeft <= 0) { clearInterval(g4Timer); processG4Answer(null); }
+            }, 100);
+        }
+        function answerG4(userAns) { clearInterval(g4Timer); processG4Answer(userAns); }
+        function processG4Answer(userAns) {
+            const current = g4CurrentList[g4Idx]; const isCorrect = userAns === current.ans;
+            let pts = 0; if(isCorrect) { pts = 25; scores.m4 += pts; updateGlobalScore(); }
+            const msg = userAns === null ? "¡Se acabó el tiempo! " + current.fb : current.fb;
+            showFeedback(isCorrect, msg, pts, () => { g4Idx++; if(g4Idx < 10) renderG4(); else returnToMenu(4); });
+        }
+
+        // --- FINAL Y REPORTE ---
+        function showFinal() {
+            showScreen('screen-final');
+            const total = scores.m1 + scores.m2 + scores.m3 + scores.m4;
+            document.getElementById('final-score-text').innerText = total;
+            
+            // Llenar datos ocultos para el reporte PDF/Img
+            document.getElementById('rep-name').innerText = `${user.nom} ${user.ape}`;
+            document.getElementById('rep-date').innerText = user.fecha;
+            document.getElementById('rep-sede').innerText = user.sede;
+            document.getElementById('rep-puesto').innerText = user.puesto;
+            
+            document.getElementById('rep-s1').innerText = `${scores.m1} / 250 pts`;
+            document.getElementById('rep-s2').innerText = `${scores.m2} / 250 pts`;
+            document.getElementById('rep-s3').innerText = `${scores.m3} / 250 pts`;
+            document.getElementById('rep-s4').innerText = `${scores.m4} / 250 pts`;
+            document.getElementById('rep-total').innerText = total;
+
+            const st = document.getElementById('rep-status');
+            if(total >= 800) { st.innerText = "ESTADO: APROBADO CON ÉXITO"; st.style.color = "var(--cm-green)"; }
+            else { st.innerText = "ESTADO: REQUIERE REPASO"; st.style.color = "var(--cm-danger)"; }
+        }
+
+        function generateReport() {
+            playSound('click');
+            const btn = event.target;
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Generando...";
+            btn.disabled = true;
+
+            const target = document.getElementById('report-template');
+            
+            html2canvas(target, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `Reporte_Etica_${user.nom}_${user.ape}.png`;
+                link.href = imgData;
+                link.click();
+                
+                btn.innerHTML = "<i class='fas fa-download'></i> Descargar Reporte (PDF/Img)";
+                btn.disabled = false;
+            }).catch(err => {
+                alert("Hubo un error generando el reporte.");
+                btn.innerHTML = "<i class='fas fa-download'></i> Descargar Reporte";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
